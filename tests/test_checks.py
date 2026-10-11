@@ -200,6 +200,9 @@ class ManifestTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as tmp:
             root=Path(tmp);one=root/'one.txt';one.write_text('one',encoding='utf8')
             target=root/'manifest.json';data={'files':manifest.files(root,target)};audit_mesh.write(target,data)
+            (root/'nested').mkdir()
+            alternate=root/'nested'/'..'/'manifest.json'
+            self.assertEqual(manifest.files(root,alternate),data['files'])
             self.assertTrue(manifest.verify(root,data,target)['pass'])
             one.write_text('changed',encoding='utf8');(root/'extra.txt').write_text('x',encoding='utf8')
             result=manifest.verify(root,data,target);self.assertEqual(result['changed'],['one.txt']);self.assertEqual(result['extra'],['extra.txt'])

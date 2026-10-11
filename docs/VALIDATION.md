@@ -49,6 +49,8 @@ python -m unittest discover -s tests -v
 
 对照 SliderSet.cpp 修正 target 别名与实际源 shape 的映射，补别名测试。空形态快照不能声称已查索引；构建退出 0 但缺本轮输出也必须失败。
 
+首次云端运行中 Linux 通过，Windows Python 3.10 的清单自身排除测试失败。输入 exclude 路径与扫描路径的规范化不一致；统一 resolve 并增加等价路径回归断言后重新运行。最终云端状态见仓库 Actions，不能用本地通过覆盖云端失败。
+
 ## 尚未覆盖
 
 本轮未重新进行 UV 棋盘格/烘焙视觉、全部 slider 组合、骨架 bind/skin transform/逐面分区覆盖的独立验证、关节动画、游戏穿戴/物品预览或 SMP 测试。Blender basis probe 不代表当前 shape key 混合后的表面。没有独立 subagent 行为验收；其他部位的 recipes 是流程走查，不是已完成的资产实例。

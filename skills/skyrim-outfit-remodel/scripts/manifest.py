@@ -11,6 +11,7 @@ IGNORED={'.git','__pycache__','.pytest_cache','.local-validation'}
 
 def files(root,exclude=None):
     root=Path(root).resolve();result={}
+    exclude=Path(exclude).resolve() if exclude is not None else None
     for path in sorted(root.rglob('*')):
         rel=path.relative_to(root)
         if any(p in IGNORED for p in rel.parts) or (exclude and path.resolve()==exclude):continue
