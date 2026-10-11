@@ -19,7 +19,7 @@ description: Remodel Skyrim SE/AE wearable equipment from references while prese
 | B 形体、拓扑 | [modeling.md](references/modeling.md) | 同角度多视图、连接和边流、保护区域检查 |
 | C UV、表面 | [uv-normals.md](references/uv-normals.md) | 棋盘格、接缝、烘焙和导出表面证据 |
 | D 绑定、动态贴合 | [weights.md](references/weights.md) | 导出权重、关节姿态、骨架/绑定变换有效 |
-| E BodySlide、形态 | [bodyslide.md](references/bodyslide.md)；紧身全包类或 Blender 往返项目另读 [kitty-recovery.md](references/kitty-recovery.md) | 源工程、体重与滑块组合、实际构建对应 |
+| E BodySlide、形态 | [bodyslide.md](references/bodyslide.md)；紧身全包类或 Blender 往返项目另读 [kitty-recovery.md](references/kitty-recovery.md)；预设消失/只剩旧项/无法应用时读 [preset-groups.md](references/preset-groups.md) | 源工程、体重与滑块组合、实际构建对应 |
 | F 材质、部署 | [materials-deployment.md](references/materials-deployment.md)、[validation.md](references/validation.md) | 资源闭合、winner、重建和游戏测试分别记录 |
 
 涉及 SMP 骨链、裙摆或披风另读 [physics.md](references/physics.md)。出现色块、爆点、CTD 先按 [troubleshooting.md](references/troubleshooting.md) 定位，不跨层盲修。
@@ -32,6 +32,7 @@ description: Remodel Skyrim SE/AE wearable equipment from references while prese
 - 保护已确认区域。索引一致可用 compare_mesh.py；重拓扑后用映射、轮廓与表面偏差证据，不能假称逐点保护通过。
 - 改 BodySlide 装备要更新源工程并实际构建；只改 meshes NIF 会被重建覆盖。
 - 需要删除被服装遮挡的身体、手脚或内层几何时，优先使用 Outfit Studio 原生 Zap，让 BodySlide Build 真正删除输出几何；不要把大量顶点压到单点或藏入身体来模拟删除。Blender 负责造型，BodySlide 语义层回 Outfit Studio 收口；详见 [kitty-recovery.md](references/kitty-recovery.md)。
+- 新建、改名或复制 BodySlide Outfit 时，检查 `Outfit Groups ∩ Target Preset Groups ≠ ∅`。自定义装备组可保留，但 3BA 等项目还要加入对应兼容组；UI 残留上次 preset 名称不算已成功应用。详见 [preset-groups.md](references/preset-groups.md)。
 - 保留装备身份、插槽、颜色和既有物理机制，除非用户要求修改。检查用参考身体按实际需求决定是否导出，避免重复身体。
 - 未知菜单/格式/版本行为先调研和最小实验。research.md 规定来源优先级、记录和停止条件。
 - 技能不额外授权发布模组、改加载顺序或删历史工程；沿用本次用户授权。缺工具时完成可做的阶段并准确记录缺项。
