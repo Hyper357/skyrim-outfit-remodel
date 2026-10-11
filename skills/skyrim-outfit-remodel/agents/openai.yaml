@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skyrim 全身装备重塑"
+  short_description: "从参考图和现有毛坯重塑全身装备，校验 UV、权重与 BodySlide 交付"
+  default_prompt: "使用 $skyrim-outfit-remodel 保留原穿戴姿态，按参考图重塑装备并完成 UV、权重、BodySlide 与游戏交付验证。"

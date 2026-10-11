@@ -1,0 +1,19 @@
+{
+  "schema": 1,
+  "project": null,
+  "game": {"edition": null, "runtime": null},
+  "tools": {"blender": null, "nif_exporter": null, "bodyslide": null, "independent_reader": null},
+  "targets": {"body": null, "skeleton": null, "preset": null, "wearing_layers": []},
+  "inputs": [],
+  "references": [],
+  "edit_route": null,
+  "protected_regions": [],
+  "uv_strategy": null,
+  "weight_donors": [],
+  "morph_strategy": null,
+  "export_index_policy": null,
+  "resource_winners": [],
+  "validation": {"visual": "pending", "mesh_uv": "pending", "skin": "pending", "bodyslide": "pending", "pose": "pending", "runtime": "pending"},
+  "rollback": null,
+  "next_action": null
+}
