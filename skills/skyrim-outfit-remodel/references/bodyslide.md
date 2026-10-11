@@ -14,6 +14,19 @@ ShapeData NIF 是基形/绑定/UV/材质源；OSP 是项目/输出/shape/slider/
 4. 改 slider 时进入该 slider 编辑模式；改 base 时退出，避免误记 delta。
 5. 保留隐藏/反向/zap/clamp/default small-big/reference/output 约定。局部修复不清空全部 slider。
 
+## A2 Blender 往返 + 原生 Zap 路线
+
+已有成熟 OSP/OSD、但需要 Blender 继续优化造型的紧身衣、长袜、全包服装，优先采用 [Kitty 路线](kitty-recovery.md)：
+
+1. Blender 只负责造型；默认保持 topology 与 vertex order，不用 Remesh、Decimate、Merge by Distance、Dissolve、Delete Faces 等操作偷偷改变旧 slider 的索引语义。
+2. 导回 Outfit Studio 后检查旧 slider 的落点和极值组合；索引没变也不等于旧 delta 对新轮廓仍然合理。
+3. 被服装遮挡的身体、手脚或内层几何需要从最终输出删除时，使用 **Outfit Studio 原生 Zap**，让 BodySlide Build 真正删除几何。不要把大量顶点压到手腕/脚踝、藏进身体或缩成一点来模拟删除。
+4. Zap 若属于项目默认设计，核对 `small` / `big` 默认值和 hidden/invert 等属性；手动测试时勾选过不代表日常 Build 会自动启用。
+5. 用新隔离目录真实构建目标 preset 与零位/基线，确认本轮新 `_0/_1/TRI` 产生，并验证目标 preset 确实改变输出。
+6. 部署后检查 MO2 实际 winner，尤其是旧 BodySlide Output 中残留的 `_0/_1.nif`、TRI 和旧 shape 名。
+
+只要 Blender 改变 topology 或 vertex order，就立即转入 B 路线，把新网格视为新的 BodySlide 基形；旧 OSD/TRI 不再按旧索引直接复用。
+
 ## B 重拓扑/新项目
 
 1. 固定新基形、shape 对应与导出规则；旧 OSD/TRI 不按旧索引复用。
@@ -31,6 +44,7 @@ ShapeData NIF 是基形/绑定/UV/材质源；OSP 是项目/输出/shape/slider/
 - 身体/内层/外层用同目标 preset；各项目 slider 定义和默认值仍需核对，名字相同不保证 delta 一致。
 - 查 0/50/100 体重、主要 slider 单独极值和组合；端点正确不证明中间/动作正确。
 - zap 后 topology 与 TRI 对应；删体表要匹配遮挡和插槽，不靠删光身体掩盖贴合问题。
+- 自定义装备组可以保留，但项目还必须与目标 preset 的身体 group 有有效交集；3BA 项目要核对 `3BA`/对应 master group。预设下拉显示上次名称，不代表当前 outfit 已成功匹配并应用它。
 
 ## 实际构建与索引冻结
 
@@ -48,5 +62,7 @@ build_bodyslide.py 要求新隔离目录、预期输出，并保存命令/日志
 5. UV/法线拆点会增加导出顶点；复制点也要映射 delta。形态依据**最终导出索引**。两端、TRI、源重建使用同一三角化/拆点/命名规则。
 6. 核对 TRI shape 名、BODYTRI 路径和运行时形态系统适用/启用情况。旧 TRI 不直接沿用。
 7. 从保存完整的源再构建，证明可交接；冻结后不再改索引。只改 meshes 的修复会被下次构建覆盖。
+8. 对经过 Blender/OS 多次往返的项目，额外比较 source、目标 preset 构建和零位构建的哈希/顶点变化；`_0/_1.nif` 与 ShapeData source 完全同哈希时，应确认是否根本没有真实应用 preset。
+9. 部署后检查 MO2 winner；源目录正确不代表运行时资源正确，高优先级 BodySlide Output 的旧 NIF/TRI 必须纳入验收。
 
-项目不显示查 OSP/分组/数据根；仍旧模型查 source/winner；slider 无效查 reference/shape/data；爆点查点序/拆点；动画与形态异常分开诊断。自动审计不替代实际构建、slider 视觉和游戏测试。
+项目不显示查 OSP/分组/数据根；预设列表异常查 outfit group 与 preset group 的交集；仍旧模型查 source/winner；slider 无效查 reference/shape/data；爆点查点序/拆点；加载/构建异常且存在大量同位点几何时，检查是否曾用压缩顶点模拟删除并改回原生 Zap；动画与形态异常分开诊断。自动审计不替代实际构建、slider 视觉和游戏测试。
