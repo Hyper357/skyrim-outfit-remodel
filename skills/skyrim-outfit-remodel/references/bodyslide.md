@@ -36,7 +36,7 @@ ShapeData NIF 是基形/绑定/UV/材质源；OSP 是项目/输出/shape/slider/
 5. 逐个相关 slider 检查 0..100，修膨胀/穿插/硬板拉伸，保护鞋头/细跟/甲片等不应鼓起的区域；按支持范围再测试负值/超范围及组合。
 6. 保留或重建隐藏/zap/配件 slider；不把全局 conform 当完成。换 reference 时对照旧 slider 清单，恢复被替换的自定义项及其属性。仅补新增/变更 slider 时，先取消全部 slider 复选框，再只勾目标项执行 conform；复查旧形态未意外重算。所用版本行为以副本实验为准。[更新项目](https://github.com/ousnius/BodySlide-and-Outfit-Studio/wiki/Updating-projects-for-new-sliders)
 7. `File → Save Project As` 核对显示名、OSP 名、ShapeData 目录、source NIF、输出路径/基名、reference 导出。仅参考身体不误导出；原装备确实含身体则按设计保留所需部分。
-8. 把项目加入匹配身体的分组，以便目标 preset 可见，并按需要加入装备自己的批量构建组。同步 SliderGroups；不要把“项目能显示”误当“目标 preset 已应用”。保存后关闭副本再重新打开项目，检查 reference、slider 和输出设置确实落盘。
+8. 把项目加入匹配身体的分组，以便目标 preset 可见，并按需要加入装备自己的批量构建组。同步 SliderGroups；不要把“项目能显示”误当“目标 preset 已应用”。保存后关闭副本再重新打开项目，检查 reference、slider 和输出设置确实落盘。预设列表异常时按 [preset-groups.md](preset-groups.md) 逐项检查。
 
 ## 体重和 preset
 
@@ -44,7 +44,7 @@ ShapeData NIF 是基形/绑定/UV/材质源；OSP 是项目/输出/shape/slider/
 - 身体/内层/外层用同目标 preset；各项目 slider 定义和默认值仍需核对，名字相同不保证 delta 一致。
 - 查 0/50/100 体重、主要 slider 单独极值和组合；端点正确不证明中间/动作正确。
 - zap 后 topology 与 TRI 对应；删体表要匹配遮挡和插槽，不靠删光身体掩盖贴合问题。
-- 自定义装备组可以保留，但项目还必须与目标 preset 的身体 group 有有效交集；3BA 项目要核对 `3BA`/对应 master group。预设下拉显示上次名称，不代表当前 outfit 已成功匹配并应用它。
+- 自定义装备组可以保留，但项目还必须与目标 preset 的身体 group 有有效交集；3BA 项目要核对 `3BA`/对应 master group。预设下拉显示上次名称，不代表当前 outfit 已成功匹配并应用它。详细诊断和最小修复见 [preset-groups.md](preset-groups.md)。
 
 ## 实际构建与索引冻结
 
