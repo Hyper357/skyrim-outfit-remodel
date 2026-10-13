@@ -1,0 +1,4 @@
+interface:
+  display_name: "Skyrim TruePBR Workflow"
+  short_description: "Build and verify TruePBR outfit materials"
+  default_prompt: "Use $skyrim-truepbr-workflow to prepare editable TruePBR materials, validate their exports and BodySlide resources, and deploy the authorized Skyrim outfit changes with rollback evidence."

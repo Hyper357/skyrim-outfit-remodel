@@ -56,3 +56,22 @@ python -m unittest discover -s tests -v
 本轮未重新进行 UV 棋盘格/烘焙视觉、全部 slider 组合、骨架 bind/skin transform/逐面分区覆盖的独立验证、关节动画、游戏穿戴/物品预览或 SMP 测试。Blender basis probe 不代表当前 shape key 混合后的表面。没有独立 subagent 行为验收；其他部位的 recipes 是流程走查，不是已完成的资产实例。
 
 保留 `pending` 的目的是让接手 agent 知道下一步所需证据。未来每件装备应填写自己的 job/HANDOFF，不能继承本案例的 pass 状态。
+
+## 2026-10-13：贴合、上色、连续接边与 TruePBR 扩充
+
+本次只发布流程、自写 helper 与合成测试；真实模型、贴图、快照和本机配置未加入仓库。前面的 2026-10-11 记录保留为历史，本节为本次新增内容的验证范围。
+
+| 验证 | 本轮结果与边界 |
+|---|---|
+| 标准库合成测试 | Windows Python 3.10，42 项全部通过；包括原 29 项、新表面映射/接边/点身份 8 项和 TruePBR 5 项 |
+| 新表面映射 helper | 同一显式映射驱动基形、骨名权重和位置 morph；检查错误映射、形态长度、top4 归一化、非有限结果与接边 delta 衰减。没有自动供体搜索或 NIF/OSD 写入 |
+| 新 Blender bridge 的真实合成往返 | Blender 5.2.0 LTS：导入合成三角形、UV、骨名权重与一个 shape key；移动 Basis 及该 key 同一位移，再导出 JSON。实测 Basis 移动 0.125，原 morph delta 保持在 `1e-6` 容差内，权重保持 |
+| Blender 失败保护 | 现存输出、重复点 ID、UV 漂移和非有限 morph 均拒绝；输入快照与输入 blend 的 SHA256 未变 |
+| 点序保护的单元测试 | 同点数但重复 ID、反向 winding 或隐式改权重均拒绝；合法点重排用原 ID 恢复，几何变化后不复用旧法线 |
+| TruePBR helper | 合成 DDS header/mip/色彩空间错误、重复 matcher、明确 coat 的 multilayer 补全、冲突拒绝及现存输出保护通过；本轮未启动 Manager 或 PGPatcher |
+| 技能包装 | 两个入口通过 skill-creator quick_validate；Markdown 本地链接、UTF-8 与机器路径检查通过 |
+| 独立复核 | Luna 复核案例与本地真实脚本的一致性，并指出失败时不应留下部分 JSON；已先完成有限数值检查与 JSON 序列化，再创建输出 |
+
+真实 BioEnclosure 贴合与 Wing 接边采用的路线、数值证据和未完成项见 [案例记录](../skills/skyrim-outfit-remodel/references/bioenclosure-case.md)。这些是已有资产工作的有界结果，不是新增 bridge 的 NIF 导出验收。
+
+新增 bridge 只验证 Blender/JSON 交换，不是通用 NIF exporter。本轮没有重新构建真实服装、执行全加载顺序 PGPatcher、测试全部动作或进入游戏；真实写回仍须受限 writer/已核验 exporter、独立解析、BodySlide 与游戏验收。用户自行构建的项目保持 build pending。

@@ -24,6 +24,14 @@ description: Remodel Skyrim SE/AE wearable equipment from references while prese
 
 涉及 SMP 骨链、裙摆或披风另读 [physics.md](references/physics.md)。出现色块、爆点、CTD 先按 [troubleshooting.md](references/troubleshooting.md) 定位，不跨层盲修。
 
+针对贴身、参考图染色和往返修改，只加载对应分支：
+
+- 紧身/半透明外壳、身体内层与动态间隙：[fitted-clothing.md](references/fitted-clothing.md)。
+- 艺术参考分区、真实部件识别与 UV 蒙版：[reference-colouring.md](references/reference-colouring.md)。
+- Blender 保索引往返、权重/形态同步与连续接边：[indexed-roundtrip.md](references/indexed-roundtrip.md)。
+- TruePBR：安装并调用本仓库配套 [skyrim-truepbr-workflow](../skyrim-truepbr-workflow/SKILL.md)；完整通道、Manager/PGPatcher、部署与验收由它负责。
+- 已验证范围和案例常数：[bioenclosure-case.md](references/bioenclosure-case.md)。
+
 ## 关键约束
 
 - 原穿戴姿态是设计锚点；骨架 bind/rest pose 与动画姿态分开。不要整体缩放或清除变换掩盖绑定错误。
@@ -39,7 +47,7 @@ description: Remodel Skyrim SE/AE wearable equipment from references while prese
 
 ## 工具与交付
 
-在技能目录运行 `python scripts/<name>.py --help`（Blender 工具需在 Blender 中运行）。审计工具只读输入；Blender 工具不保存 blend；构建报告和预期输出写入全新目录，BodySlide 本身使用隔离工具副本。
+在技能目录运行 `python scripts/<name>.py --help`（Blender 工具需在 Blender 中运行）。审计工具只读输入；indexed bridge 可保存新建的编辑 blend，但不覆盖输入；构建报告和预期输出写入全新目录，BodySlide 本身使用隔离工具副本。用户指定自行构建时交接源和待验项目。
 
 - blender_probe.py / audit_mesh.py：网格、UV、权重快照和数值检查。
 - compare_mesh.py：索引一致时检查局部保护与不变量。
@@ -47,6 +55,8 @@ description: Remodel Skyrim SE/AE wearable equipment from references while prese
 - audit_bodyslide.py：OSP 引用及可选 OSD/TRIP 索引检查。
 - build_bodyslide.py：隔离实际构建、输出与日志核验。
 - manifest.py：明确目录的文件哈希清单。
+- indexed_blender_bridge.py：带点身份、权重和可选位置 morph 的 Blender/JSON 编辑通道，不写 NIF/OSD。
+- surface_transfer.py：显式对应的基形、骨名权重和形态插值，以及接边 delta 修正，不自动找供体。
 
 命令及能力边界见 [tools.md](references/tools.md)。交付当前可编辑工程、完整重建输入、游戏资源、依赖与测试交接。造型、静态、重建、姿态、游戏状态分别报告，未做保持 pending；见 [validation.md](references/validation.md)。
 

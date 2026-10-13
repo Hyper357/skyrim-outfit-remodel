@@ -83,3 +83,9 @@ data-root 下应有 `CalienteTools/BodySlide/ShapeData`。支持 SliderSetInfo v
 ```
 
 扫描明确根目录，记录路径/字节/sha256，verify 报 changed/missing/extra。排除 manifest 本身及 .git/__pycache__/.pytest_cache/.local-validation；报告中有排除规则。拒绝符号链接/越界路径，不用于删除或自动部署。打包前仍检查文件清单和授权范围。
+
+## 贴身映射与保索引编辑
+
+`surface_transfer.py` 使用标准库，输入显式 donor/系数/offset/骨名权重/稠密 delta，输出新 JSON。格式、公式和限制见 [fitted-clothing.md](fitted-clothing.md)。不查最近面、不创建网格、不写 OSD/NIF、不部署。
+
+`indexed_blender_bridge.py` 在 Blender 中执行，以 NIF 审计快照作为 shape-local 代理。import 写全新 blend，export 校验 point-ID 双射、faces/UV、变换、权重和位置 morph 后写新 JSON。导回原 NIF 与 BodySlide 的步骤、命令及形态语义见 [indexed-roundtrip.md](indexed-roundtrip.md)。它不提供通用 NIF serializer、完整骨架动画导入或自动 OSP/OSD exporter。
