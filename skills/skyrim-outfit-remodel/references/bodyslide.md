@@ -4,6 +4,8 @@
 
 ShapeData NIF 是基形/绑定/UV/材质源；OSP 是项目/输出/shape/slider/数据集映射；OSD 是源逐点形态；运行时 NIF/TRI 是按 preset 构建的结果。BodySlide TRIP 与头部 TRI 不互换。
 
+零滑块不等于最小体型或低体重；裸基形、OSP 默认状态和个人 preset 要分别验证。Add Project 后过粗但 preset 正常时，先查隐藏非零默认修正，按 [base-shape.md](base-shape.md) 定位和修复。
+
 低高体重常用 `_0/_1.nif`，OSP OutputFile 基名不带后缀，确认 GenWeights；需要游戏形态才生成 TRI。不是所有刚性配件都需 slider。[项目组成](https://github.com/ousnius/BodySlide-and-Outfit-Studio/wiki/Creating-a-BodySlide-project)、[保存字段](https://github.com/ousnius/BodySlide-and-Outfit-Studio/wiki/Saving-a-project)
 
 ## A 保留索引修改已有项目

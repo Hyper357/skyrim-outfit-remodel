@@ -59,6 +59,8 @@ allowed.json 示例：`{"Equipment":[12,13,14]}`。只允许这些索引的坐�
 
 ## OSP / OSD / BodySlide TRIP
 
+报告的 `constant_hidden_geometry` 列出存在非零位置差分、隐藏且两体重默认相同非零的项；出现 warning 时查裸基形与默认加载状态。它不自动判错误，也不授权烘焙，具体流程见 [base-shape.md](base-shape.md)。
+
 ```powershell
 & '<python>' '<skill>/scripts/audit_bodyslide.py' '<project.osp>' --project '<exact project name>' --data-root '<Data>' --source-snapshot '<source-NIF-snapshot.json>' --tri '<built.tri>' --runtime-snapshot '<built-NIF-snapshot.json>' --out '<bs-report.json>'
 ```

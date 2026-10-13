@@ -190,6 +190,22 @@ class MorphTests(unittest.TestCase):
     def test_empty_snapshot_cannot_claim_morph_index_coverage(self):
         with self.assertRaises(ValueError):bs.inspect(self.osp,'Test',self.root,{'meshes':[]})
 
+    def test_constant_hidden_nonzero_geometry_is_reported_as_dependency(self):
+        text=self.osp.read_text(encoding='utf8').replace('<Slider name="Size">','<Slider name="Size" hidden="true" small="100" big="100">')
+        self.osp.write_text(text,encoding='utf8')
+        report=bs.inspect(self.osp,'Test',self.root,snapshot())
+        self.assertTrue(report['pass'])
+        self.assertEqual(report['constant_hidden_geometry'][0]['coefficient'],1)
+        self.assertIn('raw_zero_basis_differs_from_default_corrected_basis',report['warnings'])
+
+    def test_weight_dependent_zap_invert_and_zero_hidden_are_not_constant_geometry(self):
+        for attrs in ['hidden="true" small="100" big="0"','hidden="true" small="0" big="0"',
+                      'hidden="true" small="100" big="100" zap="true"',
+                      'hidden="true" small="100" big="100" invert="true"',
+                      'hidden="true" small="100" big="100" uv="true"']:
+            slider=bs.ET.fromstring('<Slider '+attrs+'/>')
+            self.assertIsNone(bs.constant_hidden_geometry(slider),attrs)
+
     def test_unsafe_resource_paths_rejected(self):
         for value in ['../outside','C:/outside','C:outside','/outside','\\\\server\\file','safe/../outside','']:
             with self.subTest(path=value),self.assertRaises(ValueError):bs.relative(value)

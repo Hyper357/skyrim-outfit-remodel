@@ -75,3 +75,18 @@ python -m unittest discover -s tests -v
 真实 BioEnclosure 贴合与 Wing 接边采用的路线、数值证据和未完成项见 [案例记录](../skills/skyrim-outfit-remodel/references/bioenclosure-case.md)。这些是已有资产工作的有界结果，不是新增 bridge 的 NIF 导出验收。
 
 新增 bridge 只验证 Blender/JSON 交换，不是通用 NIF exporter。本轮没有重新构建真实服装、执行全加载顺序 PGPatcher、测试全部动作或进入游戏；真实写回仍须受限 writer/已核验 exporter、独立解析、BodySlide 与游戏验收。用户自行构建的项目保持 build pending。
+
+## 2026-10-13：零滑块靴筒宽度修复
+
+在 J3 Latex Boots v7 中复现了“裸基形/归零偏宽、应用人物 preset 后贴身”的差异。根因是固定收紧量留在隐藏 `FitJ3Clearance_v7` slider（small/big 均为 100），没有进入 ShapeData 基形。见 [GitHub issue #3](https://github.com/Hyper357/skyrim-outfit-remodel/issues/3)。
+
+| 验证 | 本轮结果与边界 |
+|---|---|
+| 故障隔离 | 单独构建固定 Fit 修正，低/高体重端都确认其为常量位置差分；所有普通 morph 的源点序保持 |
+| 基形修复 | 只把该固定修正写入基形，并从 OSP/OSD 移除 helper；31 个可见 slider 和 2 个体重相关隐藏平滑 slider 保留；新基形与全零 slider 构建最大逐点误差为 0 |
+| 原 preset 回归 | 修复前后 `_0/_1` 最大逐点分量差约 `7.63e-6`；面、UV、权重、骨骼、分区、纹理引用和绑定检查保持；NIF 数值审计通过 |
+| 原模组合并重建 | 从原模组的合并 `[J3] Latex Boots` OSP 与 ShapeData 用 BodySlide 5.9.1 隔离构建，退出码 0；低/高体重几何与部署输出逐点误差均为 0，TRI 哈希相同 |
+| MO2 资源 winner | 重启后的 Default profile 中，低/高体重 NIF、TRI 和三张靴子贴图均唯一来自原 J3 Latex 模组；原插件继续引用 `boots_v7_1.nif`，独立 v7 mod/plugin 不再出现在清单 |
+| 合成回归和入口 | 44 项 unittest 通过；skill-creator `quick_validate.py` 通过 |
+
+整合时将源码、OSD、OSP、SliderGroup、运行时输出和贴图纳入原模组；冗余独立目录及重复项目定义已在备份后移入回收站。此轮完成了实际 BodySlide 命令行重建和 MO2 winner 检查；BodySlide GUI 预览、角色动作及游戏内穿戴仍为 pending。

@@ -34,6 +34,8 @@ description: Remodel Skyrim SE/AE wearable equipment from references while prese
 
 ## 关键约束
 
+- 零滑块、低体重、OSP 默认和个人 preset 分别验收；需要零位复用时，检查基础贴合是否依赖隐藏非零默认项。出现合并项目后过粗但 preset 正常时读 [base-shape.md](references/base-shape.md)，不直接烘焙整个个人 preset。
+
 - 原穿戴姿态是设计锚点；骨架 bind/rest pose 与动画姿态分开。不要整体缩放或清除变换掩盖绑定错误。
 - 拓扑或顶点顺序变更会使旧索引失效。重建 UV/权重/形态映射，不直接套用旧 OSD/TRI。
 - 保留四边形编辑工程和独立游戏输出。三角化、UV/法线拆点、分区与形态用同一稳定导出流程；检查真实输出数量和映射。

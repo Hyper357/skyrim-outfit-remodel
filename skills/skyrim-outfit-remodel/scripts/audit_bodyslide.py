@@ -79,6 +79,19 @@ def validate_diffs(diffs,count):
     if len({d[0] for d in diffs})!=len(diffs): raise ValueError('Duplicate vertex indices in morph')
 
 
+def constant_hidden_geometry(slider):
+    """Identify a dependency to review, not automatic permission to bake it."""
+    if slider.get('hidden') not in ('true','1'):
+        return None
+    if any(slider.get(k) in ('true','1') for k in ('invert','zap','uv','clamp')):
+        return None
+    try:
+        small=float(slider.get('small','0'));big=float(slider.get('big','0'))
+    except ValueError:
+        return None
+    return small/100 if math.isfinite(small) and small==big and small!=0 else None
+
+
 def inspect(osp,project,data_root,source_snapshot=None,tri=None,runtime_snapshot=None):
     root=ET.parse(osp).getroot()
     if root.tag!='SliderSetInfo' or root.get('version')!='1':
@@ -87,7 +100,7 @@ def inspect(osp,project,data_root,source_snapshot=None,tri=None,runtime_snapshot
     if len(sets)!=1: raise ValueError('Project name missing or duplicated')
     s=sets[0];folder=relative(s.findtext('DataFolder',''));source=relative(s.findtext('SourceFile',''))
     base=Path(data_root)/'CalienteTools'/'BodySlide'/'ShapeData'/folder
-    errors=[]; datasets=[]; cache={}
+    errors=[]; datasets=[]; cache={}; constant_hidden=[]
     if not (base/source).is_file(): errors.append('source_nif_missing')
     shape_targets={x.get('target') or (x.text or '').strip():(x.text or '').strip() for x in s.findall('Shape')}
     if not shape_targets or any(not k or not v for k,v in shape_targets.items()): errors.append('empty_shape_mapping')
@@ -95,6 +108,8 @@ def inspect(osp,project,data_root,source_snapshot=None,tri=None,runtime_snapshot
     source_counts=counts(source_snapshot) if source_snapshot is not None else None
     if source_counts and not set(shape_targets.values()).issubset(source_counts): errors.append('source_shapes_missing')
     for slider in s.findall('Slider'):
+        constant=constant_hidden_geometry(slider)
+        nonzero={}
         for d in slider.findall('Data'):
             if d.get('local') not in ('true','1'):
                 errors.append('external_dataset_requires_manual_resolution:'+str(d.text));continue
@@ -117,6 +132,12 @@ def inspect(osp,project,data_root,source_snapshot=None,tri=None,runtime_snapshot
                 if shape_name not in source_counts: errors.append('dataset_shape_not_in_snapshot:'+str(shape_name))
                 else: validate_diffs(cache[path][entry],source_counts[shape_name])
             datasets.append({'slider':slider.get('name'),'target':target,'entry':entry,'diffs':len(cache[path][entry])})
+            if constant is not None:
+                values=[row for row in cache[path][entry] if any(abs(x)>1e-7 for x in row[1:])]
+                if values:
+                    nonzero[target]=nonzero.get(target,0)+len(values)
+        if nonzero:
+            constant_hidden.append({'name':slider.get('name'),'coefficient':constant,'nonzero_diffs_by_target':nonzero})
     tri_summary=None
     if tri:
         if not runtime_snapshot: raise ValueError('--tri requires --runtime-snapshot of the final game NIF')
@@ -137,6 +158,8 @@ def inspect(osp,project,data_root,source_snapshot=None,tri=None,runtime_snapshot
             'output_options':dict(output.attrib) if output is not None else {},'shapes':shape_targets,
             'sliders':[{'name':x.get('name'),**x.attrib} for x in s.findall('Slider')],
             'datasets':datasets,'trip':tri_summary,
+            'constant_hidden_geometry':constant_hidden,
+            'warnings':['raw_zero_basis_differs_from_default_corrected_basis'] if constant_hidden else [],
             'coverage':{'osp_local_references':True,'osd_indices':source_counts is not None,
                         'trip_indices':tri is not None,'index_semantics':'not_tested','actual_build':'not_run','game':'not_run'}}
 
