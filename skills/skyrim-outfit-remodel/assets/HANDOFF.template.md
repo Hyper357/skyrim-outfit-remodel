@@ -10,9 +10,11 @@
 
 ```text
 AI/tool workspace: <root or unavailable>
-Discovered tools: <ComfyUI / MCP / Blender / PyNifly / BodySlide / other>
+Discovered tools: <ComfyUI / MCP / Blender / Skyrim AI Assistant Toolkit / PyNifly / BodySlide / other>
+Skyrim AI Assistant Toolkit: <path/version/configured|unconfigured/not used>
+Toolkit components used: <NIF/render/xEdit/Spriggit/triage/other or not used>
 Reference generation: <tool/workflow/model/seed or not used>
-Geometry execution: <Blender MCP / Blender Python / manual>
+Geometry execution: <Blender MCP / Blender Python / toolkit NIF tool / manual>
 NIF I/O: <PyNifly/NiflyDLL version or hash>
 BodySlide/OS: <version and project>
 Evidence: <renders/reports/workflow/log paths>
