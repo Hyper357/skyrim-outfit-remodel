@@ -4,6 +4,21 @@
 
 填写绝对路径、哈希、修改路线、目标姿态/体型/preset、工具版本。
 
+## AI / Agent 工具
+
+填写本次实际发现和调用的工具；不存在或未使用就明确写 `not used`，不要只写“AI 已处理”。
+
+```text
+AI/tool workspace: <root or unavailable>
+Discovered tools: <ComfyUI / MCP / Blender / PyNifly / BodySlide / other>
+Reference generation: <tool/workflow/model/seed or not used>
+Geometry execution: <Blender MCP / Blender Python / manual>
+NIF I/O: <PyNifly/NiflyDLL version or hash>
+BodySlide/OS: <version and project>
+Evidence: <renders/reports/workflow/log paths>
+Pending tools/tests: <items>
+```
+
 ## 已确认与保护区域
 
 列出区域、保护方式和证据。不要仅写“基本完成”。
