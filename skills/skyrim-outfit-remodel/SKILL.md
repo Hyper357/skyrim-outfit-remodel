@@ -11,11 +11,13 @@ description: Remodel Skyrim SE/AE wearable equipment from references while prese
 
 读项目 AGENTS.md 与最新交接，确认游戏/体型/骨架/工具版本和实际底稿。用 [intake.md](references/intake.md) 建立修改范围与基线。把 [job.template.json](assets/job.template.json) 和 [HANDOFF.template.md](assets/HANDOFF.template.md) 复制到本次工作目录并填写；null 表示未确认，不能当成功。
 
+若用户机器存在 AI/Agent 工作区、ComfyUI、MCP、Blender 自动化或其他可调用工具，先读 [agent-tool-orchestration.md](references/agent-tool-orchestration.md)：发现实际工具后按能力路由，优先使用已验证的 MCP/API/CLI/workflow 完成可复现操作。典型工作区可以是 `E:\SkyrimAI`，但路径不能写死；用户指定路径、`SKYRIM_AI_ROOT` 和实际探测结果优先。
+
 ## 执行与验收
 
 | 阶段 | 必读 | 继续的证据 |
 |---|---|---|
-| A 原始资源、参考 | [intake.md](references/intake.md)、[research.md](references/research.md) | 底稿、姿态、参考优先级、资源 winner、范围可追溯 |
+| A 原始资源、参考 | [intake.md](references/intake.md)、[research.md](references/research.md)；有本地 AI/MCP 工具时加读 [agent-tool-orchestration.md](references/agent-tool-orchestration.md) | 底稿、姿态、参考优先级、资源 winner、实际可用工具、范围可追溯 |
 | B 形体、拓扑 | [modeling.md](references/modeling.md) | 同角度多视图、连接和边流、保护区域检查 |
 | C UV、表面 | [uv-normals.md](references/uv-normals.md) | 棋盘格、接缝、烘焙和导出表面证据 |
 | D 绑定、动态贴合 | [weights.md](references/weights.md) | 导出权重、关节姿态、骨架/绑定变换有效 |
@@ -26,6 +28,7 @@ description: Remodel Skyrim SE/AE wearable equipment from references while prese
 
 针对贴身、参考图染色和往返修改，只加载对应分支：
 
+- Agent/AI 工具发现、ComfyUI 参考生成、Blender MCP 调用与证据闭环：[agent-tool-orchestration.md](references/agent-tool-orchestration.md)。
 - 紧身/半透明外壳、身体内层与动态间隙：[fitted-clothing.md](references/fitted-clothing.md)。
 - 艺术参考分区、真实部件识别与 UV 蒙版：[reference-colouring.md](references/reference-colouring.md)。
 - Blender 保索引往返、权重/形态同步与连续接边：[indexed-roundtrip.md](references/indexed-roundtrip.md)。
@@ -35,7 +38,7 @@ description: Remodel Skyrim SE/AE wearable equipment from references while prese
 ## 关键约束
 
 - 零滑块、低体重、OSP 默认和个人 preset 分别验收；需要零位复用时，检查基础贴合是否依赖隐藏非零默认项。出现合并项目后过粗但 preset 正常时读 [base-shape.md](references/base-shape.md)，不直接烘焙整个个人 preset。
-
+- AI 生成图只作为补充参考和视觉探索，不作为拓扑、骨骼、权重、UV、morph 或 NIF 结构真值。用户指定真实参考、已验证游戏资产和目标身体/骨架优先；多视图矛盾时先确定主参考再继续建模。
 - 原穿戴姿态是设计锚点；骨架 bind/rest pose 与动画姿态分开。不要整体缩放或清除变换掩盖绑定错误。
 - 拓扑或顶点顺序变更会使旧索引失效。重建 UV/权重/形态映射，不直接套用旧 OSD/TRI。
 - 保留四边形编辑工程和独立游戏输出。三角化、UV/法线拆点、分区与形态用同一稳定导出流程；检查真实输出数量和映射。
@@ -50,6 +53,8 @@ description: Remodel Skyrim SE/AE wearable equipment from references while prese
 ## 工具与交付
 
 在技能目录运行 `python scripts/<name>.py --help`（Blender 工具需在 Blender 中运行）。审计工具只读输入；indexed bridge 可保存新建的编辑 blend，但不覆盖输入；构建报告和预期输出写入全新目录，BodySlide 本身使用隔离工具副本。用户指定自行构建时交接源和待验项目。
+
+本地有 AI/Agent 工作区时，Agy 先按 [agent-tool-orchestration.md](references/agent-tool-orchestration.md) 盘点并调用：视觉/设计补全优先复用已验证 ComfyUI workflow；实际几何修改优先 Blender MCP 或 Blender Python；NIF、BodySlide 与 PBR 仍走各自确定性工具链。tool call 成功不等于资产通过，必须回到本技能的 render、数值和游戏 Gate 验证。
 
 - blender_probe.py / audit_mesh.py：网格、UV、权重快照和数值检查。
 - compare_mesh.py：索引一致时检查局部保护与不变量。
