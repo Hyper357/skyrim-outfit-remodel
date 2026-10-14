@@ -4,10 +4,11 @@
 
 适用于鞋靴、手套、紧身衣、领口、头部覆盖物与硬甲；涉及裙摆、披风和 SMP 时转入物理专用流程。包含 BioEnclosure 半透明贴合、Wing 连续接边与配套 TruePBR 工作流；案例参数不直接套到其他装备。
 
-## 四个常用问题
+## 五个常用问题
 
 | 需求 | 可直接读的流程 |
 |---|---|
+| 怎样让 Agy 自动发现并调用本地 AI、ComfyUI、Blender MCP 等工具 | [Agent / AI 工具编排](skills/skyrim-outfit-remodel/references/agent-tool-orchestration.md) |
 | 衣服怎样更贴身，半透明层怎样贴合身体 | [同一身体对应驱动基形、权重和滑块](skills/skyrim-outfit-remodel/references/fitted-clothing.md) |
 | 怎样按艺术参考精准上色 | [部件 ID、三维分区到 UV 蒙版、颜色与法线复核](skills/skyrim-outfit-remodel/references/reference-colouring.md) |
 | 带权重/滑块怎样进 Blender 再回 NIF/BS，怎样接边 | [保索引通道、重建路线、连续边界与 delta 同步](skills/skyrim-outfit-remodel/references/indexed-roundtrip.md) |
@@ -34,6 +35,21 @@ Copy-Item -LiteralPath '.\skyrim-outfit-remodel\skills\skyrim-truepbr-workflow' 
 
 从 [技能入口](skills/skyrim-outfit-remodel/SKILL.md) 按当前阶段阅读，不必把全部手册一次塞进上下文。先复制并填写 [任务契约](skills/skyrim-outfit-remodel/assets/job.template.json) 和 [交接模板](skills/skyrim-outfit-remodel/assets/HANDOFF.template.md)。
 
+### Agy / 本地 AI 工具联动
+
+如果 Agy 所在机器已经有类似 `E:\SkyrimAI` 的本地工具工作区，不要把这些能力当成 Skill 外部的手工步骤。先按 [agent-tool-orchestration.md](skills/skyrim-outfit-remodel/references/agent-tool-orchestration.md) 发现实际能力，再自主路由：参考图补全和视觉探索可复用 `ComfyUI/workflows`，实际几何编辑优先 Blender MCP / Blender Python，NIF 走 PyNifly/NiflyDLL，BodySlide/Outfit Studio 负责 morph/权重/构建，TruePBR 走配套 skill。
+
+路径不会被硬编码成 `E:\SkyrimAI`；用户指定工作区优先，也可以设置 `SKYRIM_AI_ROOT`。AI 生成图仅作为补充参考，不能代替真实 mesh、骨架、权重、UV、OSD/TRI 或游戏验收。与 remodel 无关的音频/语音工具即使在同一目录也不会被误调用。
+
+给 Agy 的推荐任务入口：
+
+```text
+使用 $skyrim-outfit-remodel。
+先发现当前机器的 AI/MCP/Blender/NIF/BodySlide 工具；若存在 SkyrimAI 工作区，读取其中 workflows 与 MCP 实际能力并按任务调用。
+参考不足时用已验证 ComfyUI workflow 补参考；实际几何修改用 Blender MCP/Blender Python；随后完成 NIF、权重、BodySlide 和游戏验收。
+每轮保存可回滚节点、同角度 render 和审计证据，不把 AI 图片或 tool call 成功当作资产已通过。
+```
+
 给其他 agent 的精简任务示例：
 
 ```text
@@ -45,6 +61,7 @@ Copy-Item -LiteralPath '.\skyrim-outfit-remodel\skills\skyrim-truepbr-workflow' 
 
 ## 重点内容
 
+- Agent 先发现本机已安装的 AI/MCP/CLI/workflow，再按能力自动选择工具并保存调用证据。
 - 保索引修改与重拓扑两条路线；保护确认区域，并冻结最终形态索引。
 - UV 面角/拆点、棋盘格、烘焙、法线与高光色块的分层诊断。
 - 按部位选择权重供体，检查四项影响、归一化、绑定与关节姿态。
@@ -70,4 +87,4 @@ python -m unittest discover -s tests -v
 
 ## English
 
-A Chinese-first skill collection for Skyrim SE/AE outfit remodeling and TruePBR. Includes fitted surface correspondence, reference-based region colouring, indexed Blender/JSON editing, morph-aware seam alignment and material/deployment validation. Install the relevant folders from `skills/`. Scripts and synthetic tests contain no game assets. Numerical checks and successful builds never imply visual or in-game acceptance.
+A Chinese-first skill collection for Skyrim SE/AE outfit remodeling and TruePBR. It can discover and orchestrate an existing local AI/MCP workspace for reference generation, Blender execution and deterministic downstream validation. Includes fitted surface correspondence, reference-based region colouring, indexed Blender/JSON editing, morph-aware seam alignment and material/deployment validation. Install the relevant folders from `skills/`. Scripts and synthetic tests contain no game assets. Numerical checks and successful builds never imply visual or in-game acceptance.
