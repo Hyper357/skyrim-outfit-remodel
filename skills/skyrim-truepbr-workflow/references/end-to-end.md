@@ -4,7 +4,7 @@
 
 1. **确认输入与渲染环境。** 记录游戏/Community Shaders/Open Shaders/TruePBR、Manager、PGPatcher 和 texconv 的实际版本或哈希；检查活动 MO2 profile、原 mod、overwrite/生成器输出的 winner。区分已有 Classic/PBR、ShapeData 源和运行时 NIF。验证 feature 实际加载，设置项里的 Disable at Boot=false 只是“不禁用”。
 2. **冻结已认可形体。** 保存 NIF/OSP/OSD/TRI 与插件基线。贴合、权重、滑块属于模型工作；PBR 转换本身不应顺带换身体/改 alpha/砍高领。多个套装需要唯一模型/BodySlide/TRI 路径与独立 ARMO/ARMA，不能靠同一个输出路径任选其一。
-3. **建材料清单和私有匹配路径。** 按真实 shape/UV/组件定义 albedo、normal、RMAOS、CNR 及可选通道。共享旧 diffuse 但用途不同的部件先消除匹配歧义；不发布覆盖全 mod 的粗放 alias。原理和艺术分区见配套 [参考上色](../../skyrim-outfit-remodel/references/reference-colouring.md)。
+3. **先分区，再建材料清单和私有匹配路径。** 按金属、乳胶、丝袜、皮革、布料、皮肤、半透明把每个 shape 归类；共享同一张黑 albedo 不等于同一材质，源 envmap/matcap 槽常是唯一的分区证据，转换时它会被 RMAOS 取代，所以先在交接里记录逐 shape 证据。分区规则见 [材质分区](materials.md)。然后按真实 shape/UV/组件定义 albedo、normal、RMAOS、CNR 及可选通道。共享旧 diffuse 但用途不同的部件先消除匹配歧义；不发布覆盖全 mod 的粗放 alias。原理和艺术分区见配套 [参考上色](../../skyrim-outfit-remodel/references/reference-colouring.md)。
 4. **制作物理贴图。** albedo RGB 为 sRGB；normal/RMAOS/CNR 为线性。RMAOS=roughness/metallic/AO/specular，CNR alpha=coat roughness。保留自然褶皱，AO 无烘焙证据时用中性或明确标注 heuristic。树脂观感与真实透明分开；半透明需要真实、同形变的内层身体和目标 shader 的排序验证。
 5. **编码并做像素回读。** 按通道选择 BC7/其他格式及完整 mip；需要 CNR alpha 不能用丢掉 alpha 的格式。普通 sRGB PNG→BC7 sRGB 的已验证 texconv profile 用 `-srgb -f BC7_UNORM_SRGB -m 0`，数据贴图保持线性。用 `audit_colour_roundtrip.py` 比较源 PNG 与解码 DDS；再查 header、尺寸和 mip。文件能打开不证明没有二次 gamma。
 6. **创建 `.tpbr`。** 这是可脚本生成的 JSON 项目，但不嵌入源贴图。记录实际本地路径、匹配名、feature、参数和压缩 profile。`audit_manager_export.py PROJECT.tpbr --report NEW-project.json` 检查 prepared-BC7 输入；未来版本先看项目 loader，别臆造 HTTP/CLI 导出 API。

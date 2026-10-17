@@ -1,5 +1,42 @@
 # Material and resource decisions
 
+## Classify material zones first
+
+Treat an outfit as several materials, never one. Before authoring channels or a `.tpbr` manifest, split every shape into a material zone: metal, latex, stockings/tights, leather, cloth, skin, and semi-transparent shells. A single uniform conversion silently overwrites hardware, trims and layered garments whose differences the original shader expressed through other means.
+
+### Evidence order
+
+1. Explicit user statement or the mod's own design notes.
+2. A separate albedo/normal pair used only by that part.
+3. The environment / matcap / cubemap slot (SSE slot 4 in the source NIF). A chrome or metal matcap, a warm gold matcap, and a rubber cube are different material zones even when the albedo and normal are shared.
+4. Shader numeric fields (glossiness, specular strength, environment scale) as secondary conflicting or confirming evidence only.
+5. Shape names as hints; names can be reused or wrong.
+
+The trap: one black albedo and one normal shared by latex, chrome and gold parts. Grouping shapes by `(diffuse, normal)` merges three zones; grouping by the source environment map separates them. Record the per-shape evidence in the handoff **before** conversion, because the environment slot becomes RMAOS and the original signal disappears from the file.
+
+### Zone starting points
+
+| Zone | Typical evidence | Albedo | Roughness | Metallic | Coat |
+| --- | --- | --- | --- | --- | --- |
+| Metal (steel/chrome) | Chrome matcap or metal albedo; shared black base is not metal albedo | Must be authored: steel sRGB ~165–205 linear-ish | 0.18–0.30 | 1.0 | none |
+| Metal (gold/brass) | Warm matcap; warm metal albedo | Authored warm tone sRGB ~150–200 R | 0.15–0.25 | 1.0 | none |
+| Latex (glossy) | Rubber cube; folds in normal; near-black albedo | Near-black sRGB 10–30 | 0.10–0.25 | 0 | 0.3–0.7 |
+| Latex (matte/rubber) | Rubber cube with low glossiness | Near-black to dark grey | 0.35–0.60 | 0 | 0–0.15 |
+| Stockings/tights | Separate thin garment, often alpha or body-hugging | Source albedo | 0.25–0.45 | 0 | usually none |
+| Leather | Distinct grain in normal, no clearcoat | Source albedo | 0.35–0.60 | 0 | none |
+| Cloth | High roughness, no sharp reflections | Source albedo | 0.60–0.90 | 0 | none |
+| Semi-transparent shell | Alpha property / trans maps | Keep RGB+alpha | 0.25–0.40 | 0 | reduced or none |
+
+A shared black base color is normal for latex outfits. It is **not** evidence that all parts are latex: the metal zones keep their identity only in the environment slot, and PBR metal needs a real albedo authored for it. Do not treat a matcap as a metal albedo.
+
+### Matching and verification
+
+- Give every zone private match paths (or private albedo/normal copies). A texture matcher cannot distinguish two parts that share the same diffuse string.
+- Count shapes per zone in an inventory JSON; keep the zone assignment in the handoff and in the project file.
+- Render each zone in isolation (hide the other zones) and compare against the source part; a uniform-material render cannot show a zone split.
+- Re-read the installed NIFs after conversion: confirm the metal zone has metallic RMAOS and its own albedo, the latex zone has coat channels, and no zone inherited another zone's maps.
+- A successful conversion of a shared-black outfit means the metal still reads as metal under direct lighting and the latex still reads as coated. If every part looks like the same wet material, the zone split failed regardless of file validation.
+
 ## Channels and color space
 
 | Map | Meaning | Sampling |
