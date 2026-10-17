@@ -37,6 +37,15 @@ A shared black base color is normal for latex outfits. It is **not** evidence th
 - Re-read the installed NIFs after conversion: confirm the metal zone has metallic RMAOS and its own albedo, the latex zone has coat channels, and no zone inherited another zone's maps.
 - A successful conversion of a shared-black outfit means the metal still reads as metal under direct lighting and the latex still reads as coated. If every part looks like the same wet material, the zone split failed regardless of file validation.
 
+### One parameter set per material class
+
+Within one outfit, every shape that belongs to the same material class must share one parameter set: roughness, metallic, coat strength, coat roughness and specular level. Do not assign different values per NIF, per file name or per texture pair unless the class itself differs (for example glossy latex vs matte rubber, which are separate zones).
+
+- Transparency is an alpha/blend concern. A transparent latex shell keeps the same surface parameters as the opaque latex; handle its opacity with alpha properties and a reduced coat only if the target shader requires it, and record that as its own sub-class.
+- A per-group default that silently differs from the rest of the outfit is a defect even if each file validates. It produces exactly the mismatch this workflow is meant to avoid: one piece reads as black latex, another reads grey or bronze under the same light.
+- A real case: a latex corset set got coat strength 0.30 on the body-suit group and 0.60 on the corset/gloves/boots groups from the authoring script's "transparent default". In game the 0.30 group read as black latex while the 0.60 pieces read grey outdoors and bronze indoors, looking like a different material. Unifying every coated latex shape to 0.30 (418 shapes) fixed the mismatch without touching textures or geometry.
+- If the user asks for a different finish on one piece, that is a new zone with its own evidence and its own parameter set, documented in the handoff.
+
 ## Channels and color space
 
 | Map | Meaning | Sampling |
