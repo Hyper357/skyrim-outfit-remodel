@@ -12,6 +12,19 @@ Copy the complete `skyrim-truepbr-workflow` folder, including `SKILL.md`, `refer
 
 Report file/static checks, material previews, BodySlide builds, and in-game behavior as separate evidence. Never describe static checks as game acceptance. Claim in-game acceptance only after observing the relevant result in Skyrim.
 
+## Material zone record in the handoff
+
+Record the zone split before conversion, because the source evidence disappears from the files:
+
+```text
+Zones: <metal-steel | metal-gold | latex-glossy | latex-matte | stockings | leather | cloth | transparent>
+Per zone: shapes <names/count>, evidence <env/matcap slot, separate albedo/normal, user statement>, albedo <path/value>,
+          roughness <value>, metallic <0/1>, coat <strength/roughness>, match path <private>, NIFs <list>
+Excluded: <skin/body shapes left classic>, <zones not converted and why>
+```
+
+The source environment/matcap slot is usually the only split evidence for a shared-black outfit and is replaced by RMAOS during conversion. Grouping only by `(diffuse, normal)` merges metal and latex zones; a handoff without per-shape zone evidence cannot be reviewed or reproduced.
+
 ## BodySlide handoff lessons
 
 - A Windows BodySlide case showed a Unicode `ProjectPath` falling back to another project directory. If this behavior is reproduced in the target version, use a physical ASCII-only project path; always verify which source geometry and OSD data the build consumed. This is a version-specific recovery route, not evidence that all Unicode paths fail.
