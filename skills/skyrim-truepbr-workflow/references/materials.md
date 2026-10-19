@@ -43,8 +43,15 @@ Within one outfit, every shape that belongs to the same material class must shar
 
 - Transparency is an alpha/blend concern. A transparent latex shell keeps the same surface parameters as the opaque latex; handle its opacity with alpha properties and a reduced coat only if the target shader requires it, and record that as its own sub-class.
 - A per-group default that silently differs from the rest of the outfit is a defect even if each file validates. It produces exactly the mismatch this workflow is meant to avoid: one piece reads as black latex, another reads grey or bronze under the same light.
-- A real case: a latex corset set got coat strength 0.30 on the body-suit group and 0.60 on the corset/gloves/boots groups from the authoring script's "transparent default". In game the 0.30 group read as black latex while the 0.60 pieces read grey outdoors and bronze indoors, looking like a different material. Unifying every coated latex shape to 0.30 (418 shapes) fixed the mismatch without touching textures or geometry.
+- A real case: a latex corset set got coat strength 0.30 on the body-suit group and 0.60 on the corset/gloves/boots groups from an authoring default. Unifying coat strength removed one parameter difference but **did not fix** the visible grey pieces. Later specular/coat tuning produced white gloves/boots and grey streaks and was rolled back. The decisive comparison was inside one Head Corset NIF: its black inner mask and grey outer latex had matching shader parameters but different decoded base colors. Matching the opaque latex base color to the approved black mask, while keeping normals and physical maps, was confirmed in game. See [issue #8](https://github.com/Hyper357/skyrim-outfit-remodel/issues/8).
 - If the user asks for a different finish on one piece, that is a new zone with its own evidence and its own parameter set, documented in the handoff.
+
+### Diagnose a black or grey mismatch before tuning
+
+1. Find a dark reference and a grey part in the same scene, preferably within one NIF. Check the active MO2 winners and any armor-addon texture swaps before comparing files.
+2. Compare each shape's **decoded** base-color RGB and alpha, dimensions, DDS color-space tag, normal, RMAOS, CNR, shader flags and scalar fields. A header-only sRGB change leaves the authored RGB bytes unchanged; test it as a separate hypothesis, not a substitute for comparing the pixels.
+3. If the approved reference uses a uniform near-black albedo and the grey part uses a brighter uniform albedo, stage a reversible resource-level comparison first. A same-size, pattern-free donor does not introduce UV pattern misalignment; preserve the target's normal, UV, RMAOS, CNR, geometry and metal zones. Check donor alpha and compression before reuse.
+4. Use Outfit Studio or material previews to locate a difference, then verify the final look in game. Do not call a parameter tweak successful until the same affected pieces have been checked visually. If a trial worsens the result, roll it back before trying another cause.
 
 ## Channels and color space
 
