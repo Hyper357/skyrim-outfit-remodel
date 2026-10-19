@@ -22,6 +22,8 @@ For a complete ordered delivery checklist, read [references/end-to-end.md](refer
 
 Use albedo, tangent normals, and physical maps with the existing UVs. Keep dielectric and metal regions distinct. Retain useful source folds and panel detail; do not bake studio highlights into base color. Treat actual transparency separately from a glossy resin appearance.
 
+When parts of one black material class look grey beside an approved black part, compare both shapes in the same NIF where possible. Resolve MO2 texture winners and decode the base-color RGB/alpha before changing coat or specular values. A shared shader parameter set does not imply a shared perceived color. Follow the diagnostic order in [references/materials.md](references/materials.md).
+
 For silver latex, state the intended flexible coating, reflections, and natural folds explicitly; do not assume the target is pure metallic chrome. When matching brass across different parts, compare the actual albedo, RMAOS, and normal maps against representative parts. A generic brightness multiplication alone is not sufficient evidence of a match.
 
 For newly encoded color maps, compare decoded DDS pixels against the intended PNG using `scripts/audit_colour_roundtrip.py`; the input and output color spaces both matter. The material reference documents the verified texconv switches. Header validation alone cannot detect double gamma conversion.
